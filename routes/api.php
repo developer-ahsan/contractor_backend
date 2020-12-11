@@ -28,6 +28,11 @@ Route::post('updateJob/{id}',[JobsController::class, 'updateJob']);
 Route::get('getjobs',[JobsController::class, 'getJobs']);
 Route::get('getjobs/{id}',[JobsController::class, 'getJobsById']);
 Route::get('getcounters',[JobsController::class, 'getcounters']);
+Route::get('getJobsByEmployeeId/{id}',[JobsController::class, 'getJobsByEmployeeId']);
+Route::post('updateStatusByJobId',[JobsController::class, 'updateStatusByJobId']);
+Route::post('uploadImageByJobId',[JobsController::class, 'uploadImageByJobId']);
+Route::post('jobCompletionByJobId',[JobsController::class, 'jobCompletionByJobId']);
+
 // User Area
 Route::post('registerEmployee',[UserController::class, 'registerUser']);
 Route::post('registerSubAdmin',[UserController::class, 'registerUser']);
@@ -38,5 +43,18 @@ Route::post('EditUser',[UserController::class, 'EditUser']);
 Route::get('delUserById/{id}',[UserController::class, 'delUserById']);
 
 Route::get('test', function() {
+    $user = array();
+    $user = [
+        'password' => \Str::random(10),
+        'email' => 'inziprince87@gmail.com',
+        'f_name' => 'Inzamam',
+        'l_name' => 'Idrees'
+    ];
+    
+    \Mail::send('email.register', ['random' => '<p>Your password is </p><h4>'.$user['password'].'</h4>'], function($message)  use ($user)
+    {
+        // dd($user['email']);
+        $message->to($user['email'], $user['f_name'].' '.$user['l_name'])->subject('Welcome to Contractor!');
+    });
 	return true;
 });

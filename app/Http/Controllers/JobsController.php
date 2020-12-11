@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Jobs;
+use App\Models\JobImages;
 use App\Models\User;
+
 class JobsController extends Controller
 {
 	public function getJobs()
@@ -80,5 +82,50 @@ class JobsController extends Controller
 
 	    $jobs->save();
 	    return response()->json(['Error'=>false,'msg'=>'Update is Successfully..']); 
+	}
+
+	public function getJobsByEmployeeId($id)
+	{
+		$jobs = Jobs::where('employee_id', $id)->with('employees')->get();
+		return response()->json(['jobs'=>$jobs]);
+	}
+	public function jobCompletionByJobId(Request $request)
+	{
+		$job = Jobs::find($request->id);
+		$job->job_completion = $request->job_completion;
+		$job->notes_by_employee = $request->notes_by_employee;
+		$job->status = $request->status;
+		$job->save();
+
+		return response()->json(['Error' => false, 'msg' => 'Job Completion Successfully..']);
+	}
+	public function updateStatusByJobId(Request $request)
+	{
+		$job = Jobs::find($request->id);
+		if ($job) {
+			$job->status = $request->status;
+			$job->save();
+		}
+		return response()->json(['Error'=>false,'msg'=>' Job Status Updated..']);
+	}
+	public function uploadImageByJobId(Request $request)
+	{	
+		if ($request->hasFile('file')) {
+			
+			$job_images = new JobImages;
+
+	        $getfileName = time().'.'.$request->file->getClientOriginalExtension();
+	        $filepath = $request->file->move(storage_path('files'), $getfileName); 
+	        $file = 'storage/files/'.$getfileName;
+			
+			$job_images->job_id = $request->job_id;
+			$job_images->filename = $getfileName;
+			$job_images->filepath = $file;
+			$job_images->status = $request->status;
+
+			$job_images->save();
+			return response()->json(['Error' => false, 'msg' => 'Job Image Uploaded..']);
+	    }
+		
 	}
 }

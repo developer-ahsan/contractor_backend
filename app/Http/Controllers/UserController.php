@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Str;
+
 class UserController extends Controller
 {
     public function login(Request $request)
@@ -36,6 +37,11 @@ class UserController extends Controller
             $user->user_type = $request->user_type;
             $user->added_by = 0;
             $user->save();
+
+            \Mail::send('email.register', ['random' => '<p>Your password is </p><h4>'.$user['password'].'</h4>'], function($message)  use ($user)
+            {
+                $message->to($user['email'], $user['f_name'].' '.$user['l_name'])->subject('Welcome to Contractor!');
+            });
             return response()->json(['Error'=>false,'msg'=>'Successfully Added.']);
         }
     }

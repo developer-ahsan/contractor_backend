@@ -25,8 +25,10 @@ class CreateJobsTable extends Migration
             $table->string('form_type');
             $table->string('form_link');
             $table->text('notes');
-            $table->string('status');
-            $table->string('employee_id');
+            $table->text('notes_by_employee')->nullable();
+            $table->string('status')->nullable();
+            $table->datetime('job_completion')->nullable();
+            $table->integer('employee_id');
             $table->integer('user_id');
             $table->timestamps();
         });
